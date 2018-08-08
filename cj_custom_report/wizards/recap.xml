@@ -1,0 +1,33 @@
+<odoo>
+    <record model="ir.ui.view" id="attendance_recap_report_wizard">
+        <field name="name">HR Attendance Custom Recap Report</field>
+        <field name="model">attendance.recap.report.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Recap Report">
+                <group>
+                    <group>
+                        <field name="date_start"/>
+                    </group>
+                    <group>
+                        <field name="date_end"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="get_report" string="Get Report" type="object" class="oe_highlight"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_attendance_recap_report_wizard"
+                name="Attendance Recap Report"
+                res_model="attendance.recap.report.wizard"
+                view_mode="form"
+                target="new"/>
+
+    <menuitem action="action_attendance_recap_report_wizard"
+              id="menu_attendance_report_wizard"
+              parent="hr_attendance.menu_hr_attendance_report"/>
+</odoo>
