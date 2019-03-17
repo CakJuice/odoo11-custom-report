@@ -40,17 +40,19 @@ class ReportAttendanceRecap(models.AbstractModel):
 
     @api.model
     def get_report_values(self, docids, data=None):
-        date_start = datetime.strptime(data['form']['date_start'], DATE_FORMAT)
-        date_end = datetime.strptime(data['form']['date_end'], DATE_FORMAT) + timedelta(days=1)
-        date_diff = (date_end - date_start).days
+        date_start = data['form']['date_start']
+        date_end = data['form']['date_end']
+        date_start_obj = datetime.strptime(date_start, DATE_FORMAT)
+        date_end_obj = datetime.strptime(date_end, DATE_FORMAT)
+        date_diff = (date_end_obj - date_start_obj).days + 1
 
         docs = []
         employees = self.env['hr.employee'].search([], order='name asc')
         for employee in employees:
             presence_count = self.env['hr.attendance'].search_count([
                 ('employee_id', '=', employee.id),
-                ('check_in', '>=', date_start.strftime(DATETIME_FORMAT)),
-                ('check_out', '<', date_end.strftime(DATETIME_FORMAT)),
+                ('check_in', '>=', date_start_obj.strftime(DATETIME_FORMAT)),
+                ('check_out', '<=', date_end_obj.strftime(DATETIME_FORMAT)),
             ])
 
             absence_count = date_diff - presence_count
@@ -64,7 +66,7 @@ class ReportAttendanceRecap(models.AbstractModel):
         return {
             'doc_ids': data['ids'],
             'doc_model': data['model'],
-            'date_start': date_start.strftime(DATE_FORMAT),
-            'date_end': (date_end - timedelta(days=1)).strftime(DATE_FORMAT),
+            'date_start': date_start,
+            'date_end': date_end,
             'docs': docs,
         }
